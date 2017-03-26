@@ -1,0 +1,200 @@
+//Team NaOsMi
+//	Michael Nash Luffman
+//	Oscar Romero Jorge
+//	Miguel Morel
+//Welcome to BlackJack! The following are instructions, rules, and assumptions
+//	Instructions
+//		1. We must know your name! The first step is to enter your name into the program
+//		2. Secondly, we need to know how much money you have. Since this is a game, we can pretend that you have money ;) Enter any positive integer
+//		3. Thirdly, we need to know if you even want to play! Enter 'y' or 'Y' for yes and 'n' or 'N' for no. Entering no will exit the program.
+//		4. If you answered yes to the last question, how much would you like to bet? This number must be equal to or less than your bank account, we don't accept IOU's
+//		5. After the first card is displayed, you have the option of hitting (taking another card) or staying (meaning you are ok with your current hand)
+//		Continue to play as long as you have money! 
+//	Rules, Assumptions, & Hints
+//		The user wants to have a hand closest to 21
+//		The user's hand cannot exceed 21, or they automatically lose the game
+//		If the user's current hand is equal to 21, they automatically win the game
+//		If the dealer and the player have the same hand, the dealer will always win
+//		An ace is assumed to have a value of 11
+//		When 5 cards are drawn, the player automatically wins!
+//		'H' or 'h' means hit, as in hit the user with another card
+//		'S' or 's' means stay, as in the user does not want another card
+//		The dealer NEVER shows their hand in BlackJack until the round is over
+#include <iostream>
+#include <cstdlib>
+#include <ctime>
+#include <string>
+#include <cmath>
+using namespace std;
+
+//Below is the definition and declaration of the function drawCard. This function initializes a variable, i, that is randomly assigned a variable of 1 or 0.
+//The value of i determines which if statement the function enters.
+//If the value of i is 1, the variable card is set to a value between 1 and 10. 
+//If the value of i is 0, the variable card is assigned a number between 1 and 4. The function then enters a switch statement.
+//The switch statement swaps the value of card with either 11 or 10, while also outputting the corresponding face card.
+//Finally, the value of card is returned.
+int drawCard(){
+    srand(time(0));
+    int card;
+    char face;
+    int i = rand()%2;
+    if(i == 1){       
+		card = rand()%10 + 1;
+		cout << card << endl;
+    }
+    if(i == 0){
+        card = rand()%4+1;
+        switch(card){
+            case 1:
+                cout << "Ace ";
+		card = 11;
+                break;
+            case 2:
+		card = 10;
+                cout << "Jack ";
+		break;
+            case 3:
+                cout << "Queen ";
+		card = 10;                
+		break;
+            case 4:
+                cout << "King ";
+		card = 10;                
+		break;
+            default:
+                cout << "An error has occured" << endl;
+                break;
+            }
+        }
+return card;
+}
+
+
+int main(){
+int bankAccount = 0; //Initializes the variable bankAccount of type int to 0 
+int bettingAmount; //Initializes variable bettingAmount of type int.
+string playerName; //Initializes variable playerName of type string. 
+char playNow; //Initializes variable playNow of type char.
+srand(time(0)); //Generates a random number.
+    cout << "Input your name" << endl; //Prompts user to input their name.
+    getline(cin, playerName); //Stores the string in variable playerName.
+    cout << "Welcome, " << playerName << ", to Black Jack!" << endl; //Outputs the player's name.
+    cout << "Please input a starting amount for your bank account" << endl; //Prompts user to input starting bank account amount.
+    cin >> bankAccount; //Stores the input in variable bankAccount;
+    do
+	{
+		if (!cin){ //If the input is not an integer, the user is prompted to enter a valid input. This prevents the user from inputting a letter.
+		cin.clear();
+		cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+		cout << "Please enter a positive, whole number." << endl;
+		cin >> bankAccount;
+		}
+		else if(bankAccount <= 0){ //If the input is less than or equal to 0, the user is prompted to enter a valid input.
+		cin.clear();
+		cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+		cout << "You aren't that broke, please input a non-zero positive number" << endl;
+		cin >>bankAccount;
+	 	}
+}while(bankAccount <= 0 || !cin); //These checks will continue until a valid input is entered.
+    	if(bankAccount > 0){ //If the input is an integer, the starting bank balance is output.
+        cout << "Your starting bank balance is: " << bankAccount << endl;
+    }
+    do{ //Run the program while the bankAccount is above 0. This runs the game at least once in case 
+    cout << "Would you like to play? (y/n)" << endl; //Asks the user if they would like to play the game
+    cin >> playNow; //Stores the answer in variable playNow
+        if (playNow == 'Y' || playNow == 'y'){ //If the user enters y or Y, the following will execute 
+            int betAmount; // Initializes variable betAmount of type int
+	    int betCheck[2]; //Initializes an array of 2 elements
+	    betCheck[0] = bankAccount; //Defines the first element of the array
+	    betCheck[1] = 0; //Defines the second element of the array
+            cout << "How much would you like to bet?" << endl; //Asks the user how much they would like to bet
+            cin >> betAmount; //Stores the input to variable betAmount
+	    do{
+	        if (!cin){ //Ensures the input is an integer and not a character
+	    	cin.clear();
+	    	cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        	cout << "This is not a valid input! Please enter a valid input." <<  endl;
+        	cin >> betAmount;
+    		}
+	    if (betAmount > betCheck[0]){ //Checks to ensure the betAmount is higher than the players bankAccount
+		cin.clear();
+		cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+		cout << "This is more than you have in your bank account, please enter a valid input." << endl;
+		cin >> betAmount;
+		}
+	      }while(!cin || betAmount > betCheck[0]); //Checks the input until a valid input is entered
+            if (betAmount <= betCheck[0]){ //If the betAmount is less than or equal to the bankAccount, then the game will being
+                //The following 3 lines initialize and define variables to be used in the game
+		int currentHand = 0;
+                char playAgain;
+		cout << "Let's play!" << endl;
+		int startingHand = drawCard(); //Initializes variale startingHand of type int.
+                int dealerHand = rand()%21+1;
+		cout << startingHand << " came from the deck!" << endl;
+                cout << "The sum of your hand is currently: " << startingHand << endl;
+                currentHand = startingHand; //Sets the value of currentHand to startingHand
+                for(int i = 0; i < 5; i++){ //This loop will execute 5 times, the max amount of cards to be dealt during BlackJack
+                    cout << "Would you like another card? (h/s)" << endl; //Asks the user if they would like another card
+                    cin >> playAgain; //Stores the input in variable playAgain
+                    if ((playAgain == 'h') || (playAgain == 'H')){   //If playAgain is an h or H, the following will execute
+			int newCard = drawCard(); //Variable newCard is set the function drawCard, which will return a value.
+			cout << newCard << " came from the deck!" << endl;    //Displays the card that came from the deck, ie. drawCard
+			currentHand = currentHand + newCard; //currentHand is set to the value of currentHand and the newCard from the deck
+			cout << "The sum of your hand is now " << currentHand << endl; //Outputs the value of the users current hand after drawing a card
+			if(currentHand > 21){ //If the value of currentHand is above 21, the following will execute
+				cout << "Oh no! The sum of your hand is over 21. You lost $" << betAmount << endl; //The user is told they have lost
+				bankAccount = bankAccount - betAmount; //The value of bankAccount is now equal to bankAccount minus the betAmount
+				cout << "Your bank account is now $" << bankAccount << "." << endl; //Outputs the users new bankAccount
+				i=6; //Variable i is set to 6, thus exiting the game, not the program.
+			}
+			else if(currentHand == 21){ //If the value of the users new hand is 21, then the following will execute
+				cout << "WOAH! Blackjack! You won $" << betAmount << "." << endl; //Tells the user they have won and the amount they have won
+				bankAccount = bankAccount + betAmount; //Sets the players bankAccount equal to their bankAccount plus their betAmount
+				cout << "Your bank account is now $" << bankAccount << "." << endl; //Outputs the users new bankAccount
+				i=6; //Variable i is now equal to 6, thus exiting the game, but NOT the program.
+			}
+		    }
+                    else if ((playAgain == 's') || (playAgain == 'S')){ //If the user decides to stay instead of hit, the following will execute
+                        if (currentHand <= dealerHand){ //If the value of currentHand is equal to or less than the dealerHand, the following will execute
+			    cout << "The dealer had a hand of " << dealerHand << "." << endl;
+                            cout << "You lost! The dealer's hand was greater or equal to your hand" << endl; //Tells the user they have lost
+                            cout << "You also lost $"<<betAmount << "." << endl; //Informs the user they have lost the amount they have bet
+                            bankAccount = bankAccount - betAmount; //Sets the value of bankAccount to bankAccount minus betAmount
+			    cout << "Your bank account is now $" << bankAccount << "." << endl; // Informs the user of the amount of their new bankAccount
+			    i = 6; //Variable i is now equal to 6, thus exiting the game, but NOT the progam.
+			}
+                        if (currentHand > dealerHand){ //If the users hand is greater than the dealers hand, the following will execute
+			    cout << "The dealer had a hand of " << dealerHand << "." << endl;
+                            cout <<"You won! Your hand was greater than the dealer's hand" << endl; //Informs the user they have won the game
+                            bankAccount = bankAccount + betAmount; //Sets the value of bankAccount to bankAccount plus the users betAmount
+			    cout <<"Your bank account is now $" << bankAccount << "." << endl; //Informs the user of the value of their new bankAccount
+			    i = 6; //Variable i is now equal to 6, thus exiting the game, but NOT the program.
+                        }
+			
+                      }
+		    //While the value of i never reaches 5, the loop will iterate 5 times with the final value of i being 4. When the value of i is 4, 5 cards will have been drawn.
+		    if((i + 1) == 5){ //If the value of i + 1 is equal to 5, then the following will execute
+			cout << "You have drawn 5 cards, you win" << endl; //Informs the user they win the game by default because they drew 5 cards
+			cout << "You have won $" << betAmount << "." << endl; //Tells the user how much they have won
+			bankAccount = bankAccount + betAmount; //Sets the value of bankAccount to bankAccount plus the users betAmount
+			cout << "Your bank account is now $" << bankAccount << "." << endl; //Informs the user of the value of their new bankAccount
+			}
+            }
+			
+        }
+
+    }
+	else if (playNow == 'N' || playNow == 'n'){ //If the user decides not to play, the following will execute
+		cout << "You ended with $" << bankAccount << "." << endl; //Informs the user of the final value of their bankAccount
+		cout << "Have a good day!" << endl; 
+		return 0; //Ends the program
+ }
+		
+ }while (bankAccount > 0); //Executes while the bankAccount is greater than 0
+if(bankAccount == 0){ //If the player runs out of money, the following will execute
+	cout << "Darn! You have run out of money. Please come back when you have money." << endl; 
+	cout << "Have a good one!" << endl;
+	bankAccount = -1; //Will end the program because their bankAccount is a negative value.
+	}
+ return 0; //Ends the program
+ }
